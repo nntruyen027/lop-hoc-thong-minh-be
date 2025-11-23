@@ -1,5 +1,6 @@
 package com.vinhthanh2.lophocdientu.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,16 +8,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name="users")
+@Table(name = "users", schema = "auth")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,18 +29,84 @@ public class User {
     private String password;
 
     @Column
-    private String fullName;
-
-    @Column
-    private Date birthday;
-
-    @Column
     private String avatar;
 
-    @Column
-    private String role;
+    @Column(nullable = false, length = 30)
+    private String role; // STUDENT, TEACHER, ADMIN
 
+    @Column(nullable = false)
+    private String hoTen;
+
+    // Học sinh thuộc lớp nào
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lop_id")
+    @JsonBackReference(value = "lop-hoc-sinh")
+    private Lop lop;
+
+    // Giáo viên tạo nhiều lớp
     @OneToMany(mappedBy = "giaoVien", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<Lop> dsLop;
+    @JsonManagedReference(value = "giao-vien-lop")
+    private List<Lop> dsLopTao;
+
+    // === Thông tin thêm ===
+    @Column
+    private String ngaySinh;
+    @Column
+    private Boolean laNam;
+    @Column
+    private String soThich;
+    @Column
+    private String monHocYeuThich;
+    @Column
+    private String diemManh;
+    @Column
+    private String diemYeu;
+    @Column
+    private String ngheNghiepMongMuon;
+    @Column
+    private String nhanXetGiaoVien;
+    @Column
+    private String ghiChu;
+
+    @Column
+    private Integer realisticScore;
+    @Column
+    private Integer investigativeScore;
+    @Column
+    private Integer artisticScore;
+    @Column
+    private Integer socialScore;
+    @Column
+    private Integer enterprisingScore;
+    @Column
+    private Integer conventionalScore;
+
+    @Column(length = 500)
+    private String assessmentResult;
+
+    // Thông tin phụ huynh
+    @Column
+    private String tenCha;
+    @Column
+    private String nsCha;
+    @Column
+    private String sdtCha;
+    @Column
+    private String tenMe;
+    @Column
+    private String nsMe;
+    @Column
+    private String sdtMe;
+    @Column
+    private String tenPhKhac;
+    @Column
+    private String nsPhKhac;
+    @Column
+    private String sdtPhKhac;
+
+    // Dành cho giáo viên
+    @Column
+    private String boMon;
+    @Column
+    private String chucVu;
 }

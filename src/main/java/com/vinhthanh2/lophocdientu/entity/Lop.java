@@ -3,12 +3,15 @@ package com.vinhthanh2.lophocdientu.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
-@Table(name = "lop")
+@Table(name = "lop", schema = "school")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -32,10 +35,10 @@ public class Lop {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "giao_vien_id")
-    @JsonBackReference
+    @JsonBackReference(value = "giao-vien-lop")
     private User giaoVien;
 
     @OneToMany(mappedBy = "lop", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<HocSinh> dsHocSinh;
+    @JsonManagedReference(value = "lop-hoc-sinh")
+    private List<User> dsHocSinh;
 }

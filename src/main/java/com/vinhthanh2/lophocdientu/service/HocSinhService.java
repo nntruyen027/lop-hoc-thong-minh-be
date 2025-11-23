@@ -1,102 +1,82 @@
 package com.vinhthanh2.lophocdientu.service;
 
-import com.vinhthanh2.lophocdientu.entity.HocSinh;
+import com.vinhthanh2.lophocdientu.dto.req.StudentRegisterReq;
+import com.vinhthanh2.lophocdientu.dto.req.UpdateStudentReq;
+import com.vinhthanh2.lophocdientu.dto.res.PageResponse;
+import com.vinhthanh2.lophocdientu.dto.res.StudentRes;
+import com.vinhthanh2.lophocdientu.entity.User;
+import com.vinhthanh2.lophocdientu.mapper.UserMapper;
 import com.vinhthanh2.lophocdientu.repository.HocSinhRepo;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import com.vinhthanh2.lophocdientu.repository.UserRepo;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.io.InputStream;
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class HocSinhService {
-
     private final HocSinhRepo hocSinhRepo;
+    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepo userRepo;
 
-    public HocSinhService(HocSinhRepo hocSinhRepo) {
-        this.hocSinhRepo = hocSinhRepo;
+    public PageResponse<StudentRes> layHocSinhTheoLop(Long lopId, String search, int page, int size) {
+        List<StudentRes> teacherResList = hocSinhRepo
+                .layHocSinhTheoLop(lopId, search, page, size)
+                .stream()
+                .map(userMapper::toStudentDto)
+                .toList();
+
+        long totalElements = hocSinhRepo.demHocSinhTheoLop(lopId, search);
+
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+
+        return PageResponse.<StudentRes>builder()
+                .data(teacherResList)
+                .page(page)
+                .size(size)
+                .totalPages(totalPages)
+                .totalElements(totalElements)
+                .build();
     }
 
-    // Lấy tất cả
-    public List<HocSinh> getAll() {
-        return hocSinhRepo.findAll();
+    public StudentRes layHocSinhTheoId(Long id) {
+        return userMapper.toStudentDto(hocSinhRepo.layHocSinhTheoId(id));
     }
 
-    // Lấy theo Id
-    public Optional<HocSinh> getById(Long id) {
-        return hocSinhRepo.findById(id);
+    public StudentRes dangKyHocSinh(StudentRegisterReq req) {
+        req.setPassword(passwordEncoder.encode(req.getPassword()));
+        return userMapper.toStudentDto(hocSinhRepo.taoHocSinh(req));
     }
 
-    // Thêm hoặc sửa
-    public HocSinh save(HocSinh hs) {
-        return hocSinhRepo.save(hs);
+    public StudentRes suaHocSinh(Long id, UpdateStudentReq req) {
+        return userMapper.toStudentDto(hocSinhRepo.suaHocSinh(req));
     }
 
-    // Xóa
-    public void delete(Long id) {
-        hocSinhRepo.deleteById(id);
-    }
+    public StudentRes suaThongTinCaNhan(UpdateStudentReq updateStudentReq) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-    // Thêm nhiều từ file Excel
-    public void importFromExcel(MultipartFile file) throws Exception {
-        try (InputStream is = file.getInputStream(); Workbook workbook = new XSSFWorkbook(is)) {
-            Sheet sheet = workbook.getSheetAt(0);
-            for (int i = 1; i <= sheet.getLastRowNum(); i++) { // Bỏ dòng header
-                Row row = sheet.getRow(i);
-                if (row == null) continue;
-
-                HocSinh hs = new HocSinh();
-                hs.setHoTen(getCellString(row.getCell(0)));
-                hs.setLop(getCellString(row.getCell(1)));
-                hs.setNgaySinh(getCellString(row.getCell(2)));
-                hs.setLaNam(getCellBoolean(row.getCell(3)));
-                hs.setSoThich(getCellString(row.getCell(4)));
-                hs.setMonHocYeuThich(getCellString(row.getCell(5)));
-                hs.setDiemManh(getCellString(row.getCell(6)));
-                hs.setDiemYeu(getCellString(row.getCell(7)));
-                hs.setNgheNghiepMongMuon(getCellString(row.getCell(8)));
-                hs.setNhanXetGiaoVien(getCellString(row.getCell(9)));
-                hs.setGhiChu(getCellString(row.getCell(10)));
-                hs.setRealisticScore(getCellInt(row.getCell(11)));
-                hs.setInvestigativeScore(getCellInt(row.getCell(12)));
-                hs.setArtisticScore(getCellInt(row.getCell(13)));
-                hs.setSocialScore(getCellInt(row.getCell(14)));
-                hs.setEnterprisingScore(getCellInt(row.getCell(15)));
-                hs.setConventionalScore(getCellInt(row.getCell(16)));
-                hs.setAssessmentResult(getCellString(row.getCell(17)));
-
-                hocSinhRepo.save(hs);
-            }
+        if (auth == null || !auth.isAuthenticated() ||
+                "anonymousUser".equals(auth.getPrincipal())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
         }
+
+        User user = userRepo.findByUsername(auth.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+
+        return suaHocSinh(user.getId(), updateStudentReq);
     }
 
-    private String getCellString(Cell cell) {
-        if (cell == null) return null;
-        cell.setCellType(CellType.STRING);
-        return cell.getStringCellValue();
+    public void xoaHocSinh(Long id) {
+        hocSinhRepo.xoaHocSinh(id);
     }
 
-    private Boolean getCellBoolean(Cell cell) {
-        if (cell == null) return null;
-        if (cell.getCellType() == CellType.BOOLEAN) return cell.getBooleanCellValue();
-        if (cell.getCellType() == CellType.NUMERIC) return cell.getNumericCellValue() != 0;
-        if (cell.getCellType() == CellType.STRING) return "true".equalsIgnoreCase(cell.getStringCellValue());
-        return null;
-    }
 
-    private Integer getCellInt(Cell cell) {
-        if (cell == null) return null;
-        if (cell.getCellType() == CellType.NUMERIC) return (int) cell.getNumericCellValue();
-        if (cell.getCellType() == CellType.STRING) {
-            try {
-                return Integer.parseInt(cell.getStringCellValue());
-            } catch (NumberFormatException e) {
-                return null;
-            }
-        }
-        return null;
-    }
 }

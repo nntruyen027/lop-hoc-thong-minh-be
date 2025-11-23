@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 
@@ -16,15 +17,17 @@ public class DataInitializer {
 
     @Bean
     public CommandLineRunner initAdmin(UserRepo userRepository, PasswordEncoder passwordEncoder) {
+
         return args -> {
             Optional<User> existingAdmin = userRepository.findByUsername("admin");
             if (existingAdmin.isEmpty()) {
                 User admin = new User();
                 admin.setUsername("admin");
                 admin.setPassword(passwordEncoder.encode("admin")); // mã hóa password
-                admin.setFullName("Administrator");
-                admin.setRole("ROLE_ADMIN");
-                admin.setBirthday(new Date());
+                admin.setHoTen("Administrator");
+                admin.setRole("ADMIN");
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                admin.setNgaySinh(formatter.format(new Date()));
                 userRepository.save(admin);
                 System.out.println("Created default admin user: admin / admin");
             }

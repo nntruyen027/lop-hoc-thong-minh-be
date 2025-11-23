@@ -1,18 +1,22 @@
 package com.vinhthanh2.lophocdientu.controller;
 
-import com.vinhthanh2.lophocdientu.entity.User;
+import com.vinhthanh2.lophocdientu.dto.req.TeacherRegisterReq;
+import com.vinhthanh2.lophocdientu.dto.req.UpdatePassReq;
+import com.vinhthanh2.lophocdientu.mapper.UserMapper;
 import com.vinhthanh2.lophocdientu.repository.UserRepo;
+import com.vinhthanh2.lophocdientu.service.AuthService;
+import com.vinhthanh2.lophocdientu.service.GiaoVienService;
 import com.vinhthanh2.lophocdientu.service.JwtService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -24,21 +28,12 @@ public class AuthController {
     private final UserRepo userRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
-
-    @PostMapping("/register")
-    public String register(@RequestBody Map<String, String> request) {
-        var user = new com.vinhthanh2.lophocdientu.entity.User();
-        user.setUsername(request.get("username"));
-        user.setPassword(passwordEncoder.encode(request.get("password")));
-        user.setFullName(request.get("fullName"));
-        user.setRole("USER");
-        userRepository.save(user);
-        return "User registered successfully";
-    }
+    private AuthService authService;
+    private final GiaoVienService giaoVienService;
+    private final UserMapper userMapper;
 
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody Map<String, String> request) {
-        System.out.println("gọi tới đăng nhập");
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.get("username"), request.get("password"))
         );
@@ -47,18 +42,20 @@ public class AuthController {
         return Map.of("token", token);
     }
 
+    @PostMapping("/dang-ky-giao-vien")
+    public ResponseEntity<?> dangKyGiaoVien(@RequestBody TeacherRegisterReq req) {
+        return ResponseEntity.ok((giaoVienService.dangKyGiaoVien(req)));
+    }
+
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return ResponseEntity.ok(authService.getCurrentUserDto());
+    }
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(401).body("User not authenticated");
-        }
-        String username = authentication.getName();
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        return ResponseEntity.ok(user);
+    @PutMapping("/doi-mat-khau")
+    public ResponseEntity<?> doiMatKhau(@RequestBody UpdatePassReq updatePassReq) {
+        authService.doiMatKhau(updatePassReq);
+        return ResponseEntity.ok().build();
     }
 }

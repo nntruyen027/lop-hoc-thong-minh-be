@@ -1,12 +1,16 @@
 package com.vinhthanh2.lophocdientu.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "lan_thi")
+@Table(name = "lan_thi", schema = "exam")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,7 +24,7 @@ public class LanThi {
     // Học sinh nào làm bài này
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hoc_sinh_id", nullable = false)
-    private HocSinh hocSinh;
+    private User hocSinh;
 
     // Đề nào được dùng trong lần thi này (mỗi học sinh có thể có đề riêng)
     @ManyToOne(fetch = FetchType.LAZY)

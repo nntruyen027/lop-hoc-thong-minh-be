@@ -1,10 +1,13 @@
 package com.vinhthanh2.lophocdientu.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Table(name = "bai_lam")
+@Table(name = "bai_lam", schema = "exam")
 @Getter
 @Setter
 @NoArgsConstructor
