@@ -1,9 +1,8 @@
 package com.vinhthanh2.lophocdientu.dto.res;
 
-import com.vinhthanh2.lophocdientu.entity.Lop;
+import lombok.Data;
 
-import java.util.List;
-
+@Data
 public class TruongRes {
     private Long id;
 
@@ -14,6 +13,4 @@ public class TruongRes {
     private String hinhAnh;
 
     private String logo;
-
-    private List<Lop> dsLop;
 }

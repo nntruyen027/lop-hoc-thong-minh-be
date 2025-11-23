@@ -10,7 +10,7 @@ RETURNS TABLE
     ten VARCHAR(120),
     dia_chi TEXT,
     hinh_anh TEXT,
-    logo TEXT,
+    logo TEXT
 )
 AS $$
 BEGIN
@@ -18,13 +18,13 @@ BEGIN
     SELECT t.id,
            t.ten,
            t.dia_chi,
-           u.hinh_anh,
-           u.logo,
+           t.hinh_anh,
+           t.logo
     FROM school.truong t
     WHERE
         p_search IS NULL OR p_search = ''
-        OR unaccent(lower(u.ten)) LIKE '%' || unaccent(lower(p_search)) || '%'
-    ORDER BY u.ten
+        OR unaccent(lower(t.ten)) LIKE '%' || unaccent(lower(p_search)) || '%'
+    ORDER BY t.ten
     OFFSET p_offset * p_limit
     LIMIT p_limit;
 END;

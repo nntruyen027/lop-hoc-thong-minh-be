@@ -34,7 +34,7 @@ BEGIN
     RETURN QUERY
     SELECT
         t.id AS out_id,
-        t.ho_ten,
+        t.ten,
         t.dia_chi,
         t.hinh_anh,
         t.logo

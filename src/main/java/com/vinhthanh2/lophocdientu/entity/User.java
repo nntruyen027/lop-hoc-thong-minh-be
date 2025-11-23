@@ -1,14 +1,10 @@
 package com.vinhthanh2.lophocdientu.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 @Entity
 @Table(name = "users", schema = "auth")
@@ -36,17 +32,7 @@ public class User {
 
     @Column(nullable = false)
     private String hoTen;
-
-    // Học sinh thuộc lớp nào
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lop_id")
-    @JsonBackReference(value = "lop-hoc-sinh")
-    private Lop lop;
-
-    // Giáo viên tạo nhiều lớp
-    @OneToMany(mappedBy = "giaoVien", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference(value = "giao-vien-lop")
-    private List<Lop> dsLopTao;
+    
 
     // === Thông tin thêm ===
     @Column

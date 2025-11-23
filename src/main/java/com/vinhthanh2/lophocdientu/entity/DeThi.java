@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Entity
 @Table(name = "de_thi", schema = "exam")
 @Getter
@@ -21,7 +19,4 @@ public class DeThi {
 
     private String tenDe;
     private String moTa;
-
-    @OneToMany(mappedBy = "deThi", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DeThiCauHoi> cauHoiList;
 }

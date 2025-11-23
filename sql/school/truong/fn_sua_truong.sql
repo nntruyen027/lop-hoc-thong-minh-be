@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION school.fn_sua_giao_vien
+CREATE OR REPLACE FUNCTION school.fn_sua_truong
 (
     p_id BIGINT,
     p_ten VARCHAR(120),
@@ -27,12 +27,12 @@ BEGIN
     RETURN QUERY
         SELECT
             t.id AS out_id,
-            t.ho_ten,
+            t.ten,
             t.dia_chi,
             t.hinh_anh,
             t.logo
         FROM school.truong t
-        WHERE u.id = new_id
+        WHERE t.id = new_id
     LIMIT 1;
 END;
 $$ LANGUAGE plpgsql;

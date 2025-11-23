@@ -1,8 +1,9 @@
 package com.vinhthanh2.lophocdientu.dto.req;
 
-public class TruongReq {
-    private Long id;
+import lombok.Data;
 
+@Data
+public class TruongReq {
     private String ten;
 
     private String diaChi;

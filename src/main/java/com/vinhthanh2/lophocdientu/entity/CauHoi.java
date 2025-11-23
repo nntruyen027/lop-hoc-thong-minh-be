@@ -1,6 +1,5 @@
 package com.vinhthanh2.lophocdientu.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,11 +19,6 @@ public class CauHoi {
 
     @Column(nullable = false)
     private String cauHoi;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "nhom_id")
-    @JsonBackReference
-    private NhomCauHoi nhom;
 
     @Column
     private String cauA;
