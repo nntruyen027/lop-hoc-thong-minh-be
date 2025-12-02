@@ -98,4 +98,16 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(updatePassReq.getNewPass()));
         userRepo.save(user);
     }
+
+    public void datLaiMatKhauBoiAdmin(Long userId, String newPassword) {
+        if (newPassword == null || newPassword.isBlank()) {
+            throw new AppException("Mật khẩu mới không được để trống", "INVALID_PASSWORD");
+        }
+
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new AppException("Không tìm thấy người dùng", "USER_NOT_FOUND"));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepo.save(user);
+    }
 }

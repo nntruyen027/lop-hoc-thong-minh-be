@@ -1,6 +1,6 @@
 package com.vinhthanh2.lophocdientu.controller.admin;
 
-import com.vinhthanh2.lophocdientu.dto.req.UpdatePassReq;
+import com.vinhthanh2.lophocdientu.dto.req.UpdatePassAdminReq;
 import com.vinhthanh2.lophocdientu.dto.req.UpdateTeacherReq;
 import com.vinhthanh2.lophocdientu.service.AuthService;
 import com.vinhthanh2.lophocdientu.service.GiaoVienService;
@@ -51,8 +51,8 @@ public class AdminGiaoVienController {
     }
 
     @PutMapping("/password/{id}")
-    public ResponseEntity<?> datLaiMatKhau(Long id, UpdatePassReq updatePassReq) {
-        authService.doiMatKhau(id, updatePassReq);
+    public ResponseEntity<?> datLaiMatKhau(Long id, @RequestBody UpdatePassAdminReq body) {
+        authService.datLaiMatKhauBoiAdmin(id, body.getNewPass());
         return ResponseEntity.ok().build();
     }
 

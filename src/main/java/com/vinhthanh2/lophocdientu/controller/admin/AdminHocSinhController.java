@@ -1,6 +1,6 @@
 package com.vinhthanh2.lophocdientu.controller.admin;
 
-import com.vinhthanh2.lophocdientu.dto.req.UpdatePassReq;
+import com.vinhthanh2.lophocdientu.dto.req.UpdatePassAdminReq;
 import com.vinhthanh2.lophocdientu.dto.req.UpdateStudentReq;
 import com.vinhthanh2.lophocdientu.service.AuthService;
 import com.vinhthanh2.lophocdientu.service.HocSinhService;
@@ -40,8 +40,8 @@ public class AdminHocSinhController {
     }
 
     @PutMapping("/password/{id}")
-    public ResponseEntity<?> datLaiMatKhau(Long id, UpdatePassReq updatePassReq) {
-        authService.doiMatKhau(id, updatePassReq);
+    public ResponseEntity<?> datLaiMatKhau(Long id, UpdatePassAdminReq updatePassReq) {
+        authService.datLaiMatKhauBoiAdmin(id, updatePassReq.getNewPass());
         return ResponseEntity.ok().build();
     }
 
