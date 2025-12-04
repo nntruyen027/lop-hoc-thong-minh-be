@@ -12,7 +12,7 @@ RETURNS TABLE
     ten VARCHAR(120),
     dia_chi TEXT,
     hinh_anh TEXT,
-    logo VARCHAR(50)
+    logo TEXT
 )
 AS $$
 BEGIN

@@ -11,6 +11,9 @@ public class UpdateUserReq {
 
     // Học sinh thuộc lớp nào
     private Long lopId;
+    private Long xaId;
+
+    private String diaChiChiTiet;
 
     // === Thông tin thêm ===
     private String ngaySinh;

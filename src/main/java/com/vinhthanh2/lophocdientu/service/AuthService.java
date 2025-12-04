@@ -25,11 +25,11 @@ public class AuthService {
 
         if (auth == null || !auth.isAuthenticated() ||
                 "anonymousUser".equals(auth.getPrincipal())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Người dùng chưa được xác thực");
         }
 
         User user = userRepo.findByUsername(auth.getName())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
 
         String role = user.getRole().toUpperCase();
 
@@ -44,11 +44,11 @@ public class AuthService {
 
         if (auth == null || !auth.isAuthenticated() ||
                 "anonymousUser".equals(auth.getPrincipal())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Người dùng chưa được xác thực");
         }
 
         return userRepo.findByUsername(auth.getName())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
     }
 
 
@@ -56,26 +56,26 @@ public class AuthService {
         String username = SecurityUtils.getCurrentUsername();
 
         if (username == null) {
-            throw new AppException("Không tìm thấy thông tin người dùng đăng nhập", "USER_NOT_FOUND");
+            throw new AppException("USER_NOT_FOUND", "Không tìm thấy thông tin người dùng đăng nhập");
         }
 
         User user = userRepo.findByUsername(username)
-                .orElseThrow(() -> new AppException("Không tìm thấy người dùng", "USER_NOT_FOUND"));
+                .orElseThrow(() -> new AppException("USER_NOT_FOUND", "Không tìm thấy người dùng"));
 
         if (updatePassReq.getOldPass() == null || updatePassReq.getOldPass().isBlank()) {
-            throw new AppException("Mật khẩu cũ không được để trống", "INVALID_PASSWORD");
+            throw new AppException("INVALID_PASSWORD", "Mật khẩu cũ không được để trống");
         }
 
         if (!passwordEncoder.matches(updatePassReq.getOldPass(), user.getPassword())) {
-            throw new AppException("Mật khẩu cũ không chính xác", "INVALID_PASSWORD");
+            throw new AppException("INVALID_PASSWORD", "Mật khẩu cũ không chính xác");
         }
 
         if (updatePassReq.getNewPass() == null || updatePassReq.getNewPass().isBlank()) {
-            throw new AppException("Mật khẩu mới không được để trống", "INVALID_PASSWORD");
+            throw new AppException("INVALID_PASSWORD", "Mật khẩu mới không được để trống");
         }
 
         if (!updatePassReq.getNewPass().equals(updatePassReq.getRepeatNewPass())) {
-            throw new AppException("Mật khẩu mới không khớp", "INVALID_PASSWORD");
+            throw new AppException("INVALID_PASSWORD", "Mật khẩu mới không khớp");
         }
 
         user.setPassword(passwordEncoder.encode(updatePassReq.getNewPass()));
@@ -84,15 +84,15 @@ public class AuthService {
 
     public void doiMatKhau(Long userId, UpdatePassReq updatePassReq) {
         User user = userRepo.findById(userId)
-                .orElseThrow(() -> new AppException("Không tìm thấy người dùng", "USER_NOT_FOUND"));
+                .orElseThrow(() -> new AppException("USER_NOT_FOUND", "Không tìm thấy người dùng"));
 
         if (!passwordEncoder.matches(updatePassReq.getOldPass(), user.getPassword())) {
-            throw new AppException("Mật khẩu cũ không chính xác", "INVALID_PASSWORD");
+            throw new AppException("INVALID_PASSWORD", "Mật khẩu cũ không chính xác");
         }
 
 
         if (updatePassReq.getNewPass() != updatePassReq.getRepeatNewPass()) {
-            throw new AppException("Mật khẩu mới không khớp", "INVALID_PASSWORD");
+            throw new AppException("INVALID_PASSWORD", "Mật khẩu mới không khớp");
         }
 
         user.setPassword(passwordEncoder.encode(updatePassReq.getNewPass()));
@@ -101,11 +101,11 @@ public class AuthService {
 
     public void datLaiMatKhauBoiAdmin(Long userId, String newPassword) {
         if (newPassword == null || newPassword.isBlank()) {
-            throw new AppException("Mật khẩu mới không được để trống", "INVALID_PASSWORD");
+            throw new AppException("INVALID_PASSWORD", "Mật khẩu mới không được để trống");
         }
 
         User user = userRepo.findById(userId)
-                .orElseThrow(() -> new AppException("Không tìm thấy người dùng", "USER_NOT_FOUND"));
+                .orElseThrow(() -> new AppException("USER_NOT_FOUND", "Không tìm thấy người dùng"));
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepo.save(user);

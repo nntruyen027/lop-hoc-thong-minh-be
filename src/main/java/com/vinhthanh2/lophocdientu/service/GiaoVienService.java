@@ -5,6 +5,7 @@ import com.vinhthanh2.lophocdientu.dto.req.UpdateTeacherReq;
 import com.vinhthanh2.lophocdientu.dto.res.PageResponse;
 import com.vinhthanh2.lophocdientu.dto.res.TeacherRes;
 import com.vinhthanh2.lophocdientu.entity.User;
+import com.vinhthanh2.lophocdientu.exception.AppException;
 import com.vinhthanh2.lophocdientu.mapper.UserMapper;
 import com.vinhthanh2.lophocdientu.repository.GiaoVienRepo;
 import com.vinhthanh2.lophocdientu.repository.UserRepo;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -71,6 +73,9 @@ public class GiaoVienService {
     }
 
     public TeacherRes dangKyGiaoVien(TeacherRegisterReq req) {
+        if (!Objects.equals(req.getPassword(), req.getRepeatPass())) {
+            throw new AppException("INVALID_PASSWORD", "Mật khẩu không khớp");
+        }
         req.setPassword(passwordEncoder.encode(req.getPassword()));
         return userMapper.toTeacherDto(giaoVienRepo.taoGiaoVien((req)));
     }

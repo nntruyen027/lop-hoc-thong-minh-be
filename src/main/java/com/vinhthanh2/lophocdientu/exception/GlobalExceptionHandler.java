@@ -136,10 +136,20 @@ public class GlobalExceptionHandler {
     // --- 7. Lỗi database ---
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<?> handleDatabaseError(DataAccessException ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+
+        Throwable root = ex.getMostSpecificCause();
+        String rawMsg = root != null ? root.getMessage() : ex.getMessage();
+
+        // Lấy dòng đầu tiên của thông báo lỗi
+        String clean = rawMsg.split("\n")[0]
+                .replace("ERROR:", "")        // bỏ từ ERROR:
+                .replace("Lỗi truy cập cơ sở dữ liệu:", "")
+                .trim();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 Map.of(
                         "success", false,
-                        "message", "Lỗi truy cập cơ sở dữ liệu: " + ex.getMostSpecificCause().getMessage(),
+                        "message", clean,    // chỉ còn: Tỉnh với id 2 không tồn tại
                         "timestamp", LocalDateTime.now()
                 )
         );

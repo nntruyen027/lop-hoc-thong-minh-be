@@ -11,7 +11,7 @@ RETURNS TABLE
     ten VARCHAR(120),
     dia_chi TEXT,
     hinh_anh TEXT,
-    logo VARCHAR(50)
+    logo TEXT
 )
 AS $$
 DECLARE
@@ -39,7 +39,7 @@ BEGIN
         t.hinh_anh,
         t.logo
     FROM school.truong t
-    WHERE u.id = new_id
+    WHERE t.id = new_id
     LIMIT 1;
 END;
 $$ LANGUAGE plpgsql;

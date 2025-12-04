@@ -1,5 +1,5 @@
 CREATE TABLE exam.an_thi (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     
     -- Khóa ngoại học sinh
     hoc_sinh_id BIGINT NOT NULL,

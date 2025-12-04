@@ -1,10 +1,12 @@
 CREATE TABLE auth.users (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     username VARCHAR(120) UNIQUE NOT NULL,
     password TEXT NOT NULL,
     avatar TEXT,
     role VARCHAR(30) NOT NULL, -- STUDENT, TEACHER, ADMIN
     ho_ten TEXT NOT NULL,
+    xa_id BIGINT,
+    dia_chi_chi_tiet VARCHAR(500)
 
     -- Khóa ngoại đến bảng lop (học sinh thuộc lớp nào)
     lop_id BIGINT,
@@ -41,11 +43,7 @@ CREATE TABLE auth.users (
 
     -- Dành cho giáo viên
     bo_mon TEXT,
-    chuc_vu TEXT
-);
+    chuc_vu TEXT,
 
-ALTER TABLE auth.users
-ADD CONSTRAINT fk_lop
-FOREIGN KEY (lop_id)
-REFERENCES school.lop(id)
-ON DELETE SET NULL;
+    CONSTRAINT fk_xa FOREIGN KEY (xa_id) REFERENCES dm_chung.xa(id) ON DELETE SET NULL
+);

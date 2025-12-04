@@ -16,6 +16,12 @@ public class GiaoVienPro {
 
     private String ngaySinh;
     private Boolean laNam;
+
+    private Long xaId;
+
+    private String tenXa;
+
+    private String diaChiChiTiet;
     // Dành cho giáo viên
     private String boMon;
     private String chucVu;

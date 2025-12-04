@@ -32,7 +32,13 @@ public class User {
 
     @Column(nullable = false)
     private String hoTen;
-    
+
+    @Transient
+    private Xa xa;
+
+    @Column
+    private String diaChiChiTiet;
+
 
     // === Thông tin thêm ===
     @Column

@@ -17,7 +17,9 @@ public class StudentRegisterReq {
 
     // Học sinh thuộc lớp nào
     private Lop lop;
+    private Long xaId;
 
+    private String diaChiChiTiet;
 
     // === Thông tin thêm ===
     private String ngaySinh;

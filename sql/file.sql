@@ -1,5 +1,5 @@
 CREATE TABLE files (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     file_name TEXT,
     stored_name TEXT,
     url TEXT,

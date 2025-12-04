@@ -14,7 +14,9 @@ public class TeacherRes {
 
     private String ngaySinh;
     private Boolean laNam;
-
+    private String role;
+    private XaRes xa;
+    private String diaChiChiTiet;
 
     // Dành cho giáo viên
     private String boMon;

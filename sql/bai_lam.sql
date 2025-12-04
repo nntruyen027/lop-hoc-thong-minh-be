@@ -1,5 +1,5 @@
 CREATE TABLE exam.bai_lam (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     lan_thi_id BIGINT NOT NULL,
     cau_hoi_id BIGINT NOT NULL,
     dap_an_hoc_sinh TEXT,

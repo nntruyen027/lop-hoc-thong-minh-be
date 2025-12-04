@@ -1,5 +1,5 @@
 CREATE TABLE exam.de_thi_cau_hoi (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     de_thi_id BIGINT,
     cau_hoi_id BIGINT,
     thu_tu INT,

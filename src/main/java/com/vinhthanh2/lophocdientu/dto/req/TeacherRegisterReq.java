@@ -8,6 +8,8 @@ public class TeacherRegisterReq {
 
     private String password;
 
+    private String repeatPass;
+
     private String avatar;
 
     private String hoTen;
@@ -15,6 +17,9 @@ public class TeacherRegisterReq {
     private String ngaySinh;
     private Boolean laNam;
 
+    private Long xaId;
+
+    private String diaChiChiTiet;
     // Dành cho giáo viên
     private String boMon;
     private String chucVu;

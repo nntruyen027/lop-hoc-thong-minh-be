@@ -9,6 +9,9 @@ public class UpdateTeacherReq {
     private String avatar;
 
     private String hoTen;
+    private Long xaId;
+
+    private String diaChiChiTiet;
 
     private String ngaySinh;
     private Boolean laNam;

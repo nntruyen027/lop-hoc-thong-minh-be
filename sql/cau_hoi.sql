@@ -1,5 +1,5 @@
 CREATE TABLE exam.cau_hoi (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     cau_hoi TEXT NOT NULL,
     nhom_id BIGINT,
     cau_a TEXT,

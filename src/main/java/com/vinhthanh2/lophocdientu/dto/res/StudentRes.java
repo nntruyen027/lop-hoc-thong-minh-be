@@ -15,8 +15,9 @@ public class StudentRes {
 
     // Học sinh thuộc lớp nào
     private Lop lop;
-
-
+    private String role;
+    private XaRes xa;
+    private String diaChiChiTiet;
     // === Thông tin thêm ===
     private String ngaySinh;
     private Boolean laNam;

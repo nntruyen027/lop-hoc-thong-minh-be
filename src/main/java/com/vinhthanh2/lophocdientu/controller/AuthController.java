@@ -2,6 +2,7 @@ package com.vinhthanh2.lophocdientu.controller;
 
 import com.vinhthanh2.lophocdientu.dto.req.TeacherRegisterReq;
 import com.vinhthanh2.lophocdientu.dto.req.UpdatePassReq;
+import com.vinhthanh2.lophocdientu.exception.AppException;
 import com.vinhthanh2.lophocdientu.mapper.UserMapper;
 import com.vinhthanh2.lophocdientu.repository.UserRepo;
 import com.vinhthanh2.lophocdientu.service.AuthService;
@@ -12,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -34,12 +36,20 @@ public class AuthController {
 
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody Map<String, String> request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.get("username"), request.get("password"))
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.get("username"),
+                            request.get("password")
+                    )
+            );
 
-        String token = jwtService.generateToken(request.get("username"));
-        return Map.of("token", token);
+            String token = jwtService.generateToken(request.get("username"));
+            return Map.of("token", token);
+
+        } catch (BadCredentialsException ex) {
+            throw new AppException("BAD_CREDENTIAL", "Thông tin đăng nhập không hợp lệ");
+        }
     }
 
     @PostMapping("/dang-ky-giao-vien")

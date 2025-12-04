@@ -1,5 +1,5 @@
 CREATE TABLE school.lop (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     ten VARCHAR(120) NOT NULL,
     hinh_anh TEXT,
 
