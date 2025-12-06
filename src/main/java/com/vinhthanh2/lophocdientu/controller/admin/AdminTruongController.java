@@ -1,12 +1,18 @@
 package com.vinhthanh2.lophocdientu.controller.admin;
 
 import com.vinhthanh2.lophocdientu.dto.req.TruongReq;
+import com.vinhthanh2.lophocdientu.entity.Xa;
+import com.vinhthanh2.lophocdientu.repository.TinhRepo;
+import com.vinhthanh2.lophocdientu.repository.XaRepo;
 import com.vinhthanh2.lophocdientu.service.GiaoVienService;
 import com.vinhthanh2.lophocdientu.service.LopService;
 import com.vinhthanh2.lophocdientu.service.TruongService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -16,8 +22,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
+import java.util.List;
 
 @RestController
 @RequestMapping("/quan-tri/truong")
@@ -29,6 +37,8 @@ public class AdminTruongController {
     final private TruongService truongService;
     final private LopService lopService;
     final private GiaoVienService giaoVienService;
+    final private TinhRepo tinhRepo;
+    final private XaRepo xaRepo;
 
     @GetMapping
     public ResponseEntity<?> layDsTruong(@RequestParam(required = false, defaultValue = "") String search,
@@ -71,19 +81,46 @@ public class AdminTruongController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/importer/template")
-    public ResponseEntity<byte[]> downloadTemplate() throws IOException {
-        // Lấy file từ resources
+    @GetMapping("/importer/template/tinh/{tinhId}")
+    public ResponseEntity<byte[]> downloadTemplate(@PathVariable Long tinhId) throws IOException {
         Resource resource = new ClassPathResource("templates/mau_import_truong.xlsx");
 
-        // Đọc nội dung file
-        byte[] fileBytes = Files.readAllBytes(resource.getFile().toPath());
+        // Đọc file từ classpath
+        InputStream inputStream = resource.getInputStream();
+        XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
+
+        List<Xa> xas = xaRepo.layTatCaXa("", tinhId, 1, 100000);
+
+        XSSFSheet sheetXa = workbook.getSheet("dm_xa");
+        if (sheetXa == null) sheetXa = workbook.createSheet("dm_xa");
+
+        int lastRowXa = sheetXa.getLastRowNum();
+        for (int i = lastRowXa; i > 0; i--) {
+            Row row = sheetXa.getRow(i);
+            if (row != null) sheetXa.removeRow(row);
+        }
+
+        Row headerXa = sheetXa.getRow(0);
+        if (headerXa == null) headerXa = sheetXa.createRow(0);
+        headerXa.createCell(0).setCellValue("ID");
+        headerXa.createCell(1).setCellValue("Tên xã");
+
+        int rowIndexXa = 1;
+        for (Xa xa : xas) {
+            Row row = sheetXa.createRow(rowIndexXa++);
+            row.createCell(0).setCellValue(xa.getId());
+            row.createCell(1).setCellValue(xa.getId() + " - " + xa.getTen());
+        }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        workbook.write(out);
+        workbook.close();
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=mau_import_truong.xlsx")
-                .body(fileBytes);
+                .body(out.toByteArray());
     }
 
     @PostMapping(value = "/importer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

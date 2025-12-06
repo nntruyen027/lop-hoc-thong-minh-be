@@ -5,7 +5,7 @@ import com.vinhthanh2.lophocdientu.dto.req.UpdateStudentReq;
 import com.vinhthanh2.lophocdientu.dto.res.PageResponse;
 import com.vinhthanh2.lophocdientu.dto.res.StudentRes;
 import com.vinhthanh2.lophocdientu.entity.User;
-import com.vinhthanh2.lophocdientu.mapper.UserMapper;
+import com.vinhthanh2.lophocdientu.mapper.HocSinhMapper;
 import com.vinhthanh2.lophocdientu.repository.HocSinhRepo;
 import com.vinhthanh2.lophocdientu.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -22,15 +22,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HocSinhService {
     private final HocSinhRepo hocSinhRepo;
-    private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final UserRepo userRepo;
+    private final HocSinhMapper hocSinhMapper;
 
     public PageResponse<StudentRes> layHocSinhTheoLop(Long lopId, String search, int page, int size) {
         List<StudentRes> teacherResList = hocSinhRepo
                 .layHocSinhTheoLop(lopId, search, page, size)
                 .stream()
-                .map(userMapper::toStudentDto)
+                .map(hocSinhMapper::toStudentDto)
                 .toList();
 
         long totalElements = hocSinhRepo.demHocSinhTheoLop(lopId, search);
@@ -47,16 +47,16 @@ public class HocSinhService {
     }
 
     public StudentRes layHocSinhTheoId(Long id) {
-        return userMapper.toStudentDto(hocSinhRepo.layHocSinhTheoId(id));
+        return hocSinhMapper.toStudentDto(hocSinhRepo.layHocSinhTheoId(id));
     }
 
     public StudentRes dangKyHocSinh(StudentRegisterReq req) {
         req.setPassword(passwordEncoder.encode(req.getPassword()));
-        return userMapper.toStudentDto(hocSinhRepo.taoHocSinh(req));
+        return hocSinhMapper.toStudentDto(hocSinhRepo.taoHocSinh(req));
     }
 
     public StudentRes suaHocSinh(Long id, UpdateStudentReq req) {
-        return userMapper.toStudentDto(hocSinhRepo.suaHocSinh(req));
+        return hocSinhMapper.toStudentDto(hocSinhRepo.suaHocSinh(req));
     }
 
     public StudentRes suaThongTinCaNhan(UpdateStudentReq updateStudentReq) {

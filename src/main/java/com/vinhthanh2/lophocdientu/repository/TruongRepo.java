@@ -64,7 +64,8 @@ public class TruongRepo {
         String sql = """
                     SELECT * from school.fn_tao_truong(
                         :p_ten,
-                        :p_dia_chi,
+                        :p_xa_id,
+                        :p_dia_chi_chi_tiet,
                         :p_hinh_anh,
                         :p_logo
                     )
@@ -72,7 +73,8 @@ public class TruongRepo {
 
         return truongMapper.fromTruongPro((TruongPro) entityManager.createNativeQuery(sql, TruongPro.class)
                 .setParameter("p_ten", truong.getTen())
-                .setParameter("p_dia_chi", truong.getDiaChi())
+                .setParameter("p_dia_chi_chi_tiet", truong.getDiaChiChiTiet())
+                .setParameter("xa_id", truong.getXaId())
                 .setParameter("p_hinh_anh", truong.getHinhAnh())
                 .setParameter("p_logo", truong.getLogo())
                 .getSingleResult()
@@ -85,7 +87,8 @@ public class TruongRepo {
                     SELECT * from school.fn_sua_truong(
                         :p_id,
                         :p_ten,
-                        :p_dia_chi,
+                        :p_xa_id,
+                        :p_dia_chi_chi_tiet,
                         :p_hinh_anh,
                         :p_logo
                     )
@@ -94,7 +97,8 @@ public class TruongRepo {
         return truongMapper.fromTruongPro((TruongPro) entityManager.createNativeQuery(sql, TruongPro.class)
                 .setParameter("p_id", id)
                 .setParameter("p_ten", truong.getTen())
-                .setParameter("p_dia_chi", truong.getDiaChi())
+                .setParameter("p_dia_chi_chi_tiet", truong.getDiaChiChiTiet())
+                .setParameter("xa_id", truong.getXaId())
                 .setParameter("p_hinh_anh", truong.getHinhAnh())
                 .setParameter("p_logo", truong.getLogo())
                 .getSingleResult()
@@ -125,17 +129,26 @@ public class TruongRepo {
                 batchSize,
                 row -> {
                     String ten = ExcelUtils.getCellValue(row.getCell(1));
-                    String diaChi = ExcelUtils.getCellValue(row.getCell(2));
-                    String hinhAnh = ExcelUtils.getCellValue(row.getCell(3));
-                    String logo = ExcelUtils.getCellValue(row.getCell(4));
+                    String diaChiChiTiet = ExcelUtils.getCellValue(row.getCell(3));
+
+                    String xaRaw = ExcelUtils.getCellValue(row.getCell(2));
+                    Long xaId = null;
+                    if (xaRaw != null && xaRaw.contains(" - ")) {
+                        xaId = Long.parseLong(xaRaw.split(" - ")[0]);
+                    } else {
+                        throw new RuntimeException("Sai định dạng cột xã ở dòng " + (row.getRowNum() + 1));
+                    }
+
+                    String hinhAnh = ExcelUtils.getCellValue(row.getCell(4));
+                    String logo = ExcelUtils.getCellValue(row.getCell(5));
 
                     if (ten == null || ten.isEmpty()) {
                         throw new RuntimeException("Tên trường bị trống ở dòng " + (row.getRowNum() + 1));
                     }
 
-                    return new Object[]{ten, diaChi, hinhAnh, logo};
+                    return new Object[]{ten, diaChiChiTiet, xaId, hinhAnh, logo};
                 },
-                "school.fn_import_truong", "truong_input"
+                "school.fn_import_truong", "school.truong_input"
         );
     }
 }

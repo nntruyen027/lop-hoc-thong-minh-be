@@ -9,13 +9,19 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {
+        XaMapper.class, TruongMapper.class
+})
 public interface TruongMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Truong fromDto(TruongReq truongReq);
-    
+
     TruongRes toDto(Truong truong);
 
     @Mapping(source = "outId", target = "id")
+    @Mapping(source = "xaId", target = "xa.id")
+    @Mapping(source = "tenXa", target = "xa.ten")
+    @Mapping(source = "tinhId", target = "xa.tinh.id")
+    @Mapping(source = "tenTinh", target = "xa.tinh.ten")
     Truong fromTruongPro(TruongPro dto);
 }

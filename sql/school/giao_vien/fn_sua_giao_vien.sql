@@ -1,3 +1,5 @@
+DROP FUNCTION IF EXISTS school.fn_sua_giao_vien;
+
 CREATE OR REPLACE FUNCTION school.fn_sua_giao_vien
 (
     p_id BIGINT,
@@ -5,6 +7,8 @@ CREATE OR REPLACE FUNCTION school.fn_sua_giao_vien
     p_ho_ten TEXT,
     p_ngay_sinh VARCHAR(50),
     p_la_nam BOOLEAN,
+    p_xa_id BIGINT,
+    p_dia_chi_chi_tiet VARCHAR(120),
     p_bo_mon TEXT,
     p_chuc_vu TEXT
 )
@@ -17,10 +21,24 @@ RETURNS TABLE
     ngay_sinh VARCHAR(50),
     la_nam BOOLEAN,
     bo_mon TEXT,
-    chuc_vu TEXT
+    chuc_vu TEXT,
+	dia_chi_chi_tiet VARCHAR(500),
+	xa_id BIGINT,
+	ten_xa VARCHAR(120),
+	tinh_id BIGINT,
+	ten_tinh VARCHAR(120),
+	role VARCHAR(30)
 )
 AS $$
 BEGIN
+	IF NOT EXISTS (select 1 from auth.users u where u.id = p_id and u.role = 'TEACHER') THEN
+		raise exception 'Giáo viên với id % không tồn tại', p_id;
+	END IF;
+
+	IF NOT EXISTS (select 1 from dm_chung.xa x where x.id = p_xa_id) THEN
+    		raise exception 'Xã với id % không tồn tại', p_xa_id;
+    	END IF;
+
     UPDATE auth.users
     SET
         avatar = p_avatar,
@@ -28,7 +46,9 @@ BEGIN
         ngay_sinh = p_ngay_sinh,
         la_nam = p_la_nam,
         bo_mon = p_bo_mon,
-        chuc_vu = p_chuc_vu
+        chuc_vu = p_chuc_vu,
+		dia_chi_chi_tiet = p_dia_chi_chi_tiet,
+	   	xa_id = p_xa_id
     WHERE id = p_id
       AND role = 'TEACHER';
 
@@ -40,8 +60,16 @@ BEGIN
            u.ngay_sinh,
            u.la_nam,
            u.bo_mon,
-           u.chuc_vu
+           u.chuc_vu,
+		   u.dia_chi_chi_tiet,
+           x.id as xa_id,
+           x.ten as ten_xa,
+           t.id as tinh_id,
+           t.ten as ten_tinh,
+		   u.role
     FROM auth.users u
+	LEFT JOIN dm_chung.xa x ON x.id = u.xa_id
+	LEFT JOIN dm_chung.tinh t ON t.id = x.tinh_id
     WHERE u.id = p_id
       AND u.role = 'TEACHER'
     LIMIT 1;

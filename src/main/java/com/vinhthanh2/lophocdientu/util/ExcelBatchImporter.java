@@ -64,8 +64,10 @@ public class ExcelBatchImporter {
                 Object val = row[i];
                 if (val == null) {
                     sb.append("NULL");
+                } else if (val instanceof Number) {      // BIGINT, INT
+                    sb.append(val);
                 } else {
-                    String str = val.toString().replace("'", "''"); // escape single quote
+                    String str = val.toString().replace("'", "''");
                     sb.append("'").append(str).append("'");
                 }
                 if (i < row.length - 1) sb.append(",");

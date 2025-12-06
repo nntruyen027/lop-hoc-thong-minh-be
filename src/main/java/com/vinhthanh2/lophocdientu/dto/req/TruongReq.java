@@ -6,7 +6,9 @@ import lombok.Data;
 public class TruongReq {
     private String ten;
 
-    private String diaChi;
+    private String diaChiChiTiet;
+
+    private String xaId;
 
     private String hinhAnh;
 

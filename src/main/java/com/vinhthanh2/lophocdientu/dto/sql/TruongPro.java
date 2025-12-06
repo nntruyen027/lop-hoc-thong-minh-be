@@ -10,7 +10,15 @@ public class TruongPro {
 
     private String ten;
 
-    private String diaChi;
+    private Long xaId;
+
+    private String tenXa;
+
+    private Long tinhId;
+
+    private String tenTinh;
+
+    private String diaChiChiTiet;
 
     private String hinhAnh;
 

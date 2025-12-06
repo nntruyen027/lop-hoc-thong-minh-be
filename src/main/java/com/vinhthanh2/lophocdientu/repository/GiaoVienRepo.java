@@ -96,26 +96,7 @@ public class GiaoVienRepo {
 
         return Long.parseLong(result.toString());
     }
-
-    // ============================================================
-    // LẤY GIÁO VIÊN THEO USERNAME
-    // ============================================================
-    @SuppressWarnings("unchecked")
-    public User layGiaoVienTheoUsername(String username) {
-        String sql = """
-                    SELECT * FROM school.fn_lay_giao_vien_theo_username(:p_username)
-                """;
-
-        List<User> list = entityManager.createNativeQuery(sql, User.class)
-                .setParameter("p_username", username)
-                .getResultList();
-
-        if (list.isEmpty()) {
-            throw new AppException("Không tìm thấy giáo viên có username: " + username, "USER_NOT_FOUND");
-        }
-
-        return list.get(0);
-    }
+    
 
     @SuppressWarnings("unchecked")
     public User layGiaoVienTheoId(Long id) {
@@ -148,6 +129,8 @@ public class GiaoVienRepo {
                         :p_ho_ten,
                         :p_ngay_sinh,
                         :p_la_nam,
+                        :p_xa_id,
+                        :p_dia_chi_chi_tiet,
                         :p_bo_mon,
                         :p_chuc_vu
                     )
@@ -163,6 +146,8 @@ public class GiaoVienRepo {
                 .setParameter("p_la_nam", req.getLaNam())
                 .setParameter("p_bo_mon", req.getBoMon())
                 .setParameter("p_chuc_vu", req.getChucVu())
+                .setParameter("p_xa_id", req.getXaId())
+                .setParameter("p_dia_chi_chi_tiet", req.getDiaChiChiTiet())
                 .getSingleResult());
     }
 
@@ -179,12 +164,14 @@ public class GiaoVienRepo {
                         :p_ho_ten,
                         :p_ngay_sinh,
                         :p_la_nam,
+                        :p_xa_id,
+                        :p_dia_chi_chi_tiet,
                         :p_bo_mon,
                         :p_chuc_vu
                     )
                 """;
 
-        return (User) userMapper.fromGiaoVienPro((GiaoVienPro) entityManager.createNativeQuery(sql, GiaoVienPro.class)
+        GiaoVienPro giaoVienPro = (GiaoVienPro) entityManager.createNativeQuery(sql, GiaoVienPro.class)
                 .setParameter("p_id::bigint", id)
                 .setParameter("p_avatar", req.getAvatar())
                 .setParameter("p_ho_ten", req.getHoTen())
@@ -192,7 +179,11 @@ public class GiaoVienRepo {
                 .setParameter("p_la_nam", req.getLaNam())
                 .setParameter("p_bo_mon", req.getBoMon())
                 .setParameter("p_chuc_vu", req.getChucVu())
-                .getSingleResult());
+                .setParameter("p_xa_id", req.getXaId())
+                .setParameter("p_dia_chi_chi_tiet", req.getDiaChiChiTiet())
+                .getSingleResult();
+
+        return userMapper.fromGiaoVienPro(giaoVienPro);
     }
 
     // ============================================================

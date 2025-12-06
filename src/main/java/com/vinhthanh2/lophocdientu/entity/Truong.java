@@ -21,8 +21,11 @@ public class Truong {
     @Column(nullable = false, length = 120)
     private String ten;
 
+    @Transient
+    private Xa xa;
+
     @Column
-    private String diaChi;
+    private String diaChiChiTiet;
 
     @Column
     private String hinhAnh;

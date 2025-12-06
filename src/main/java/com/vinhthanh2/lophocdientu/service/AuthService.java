@@ -4,6 +4,7 @@ import com.vinhthanh2.lophocdientu.dto.req.UpdatePassReq;
 import com.vinhthanh2.lophocdientu.entity.User;
 import com.vinhthanh2.lophocdientu.exception.AppException;
 import com.vinhthanh2.lophocdientu.mapper.UserMapper;
+import com.vinhthanh2.lophocdientu.repository.UserInfoRepo;
 import com.vinhthanh2.lophocdientu.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ public class AuthService {
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final UserInfoRepo userInfoRepo;
 
     public Object getCurrentUserDto() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -28,15 +30,14 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Người dùng chưa được xác thực");
         }
 
-        User user = userRepo.findByUsername(auth.getName())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
+        String role = auth.getAuthorities().iterator().next().getAuthority();
 
-        String role = user.getRole().toUpperCase();
-
-        if (role.contains("ADMIN")) return user;
-        if (role.contains("STUDENT")) return userMapper.toStudentDto(user);
-
-        return userMapper.toTeacherDto(user);
+        if (role.contains("ADMIN"))
+            return userMapper.toAdminDto(userInfoRepo.layQuanTriTheoUsername(auth.getName()));
+        else if (role.contains("TEACHER"))
+            return userMapper.toTeacherDto(userInfoRepo.layGiaoVienTheoUsername(auth.getName()));
+        else
+            return userMapper.toTeacherDto(userInfoRepo.layHocSinhTheoUsername(auth.getName()));
     }
 
     public User getCurrentUser() {

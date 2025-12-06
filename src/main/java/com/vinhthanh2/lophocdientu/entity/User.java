@@ -36,9 +36,11 @@ public class User {
     @Transient
     private Xa xa;
 
+    @Transient
+    private Lop lop;
+
     @Column
     private String diaChiChiTiet;
-
 
     // === Thông tin thêm ===
     @Column

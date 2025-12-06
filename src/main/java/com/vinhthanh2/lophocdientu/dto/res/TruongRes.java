@@ -8,7 +8,9 @@ public class TruongRes {
 
     private String ten;
 
-    private String diaChi;
+    private XaRes xa;
+
+    private String diaChiChiTiet;
 
     private String hinhAnh;
 
