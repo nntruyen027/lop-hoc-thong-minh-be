@@ -5,9 +5,7 @@ import com.vinhthanh2.lophocdientu.dto.req.UpdatePassReq;
 import com.vinhthanh2.lophocdientu.exception.AppException;
 import com.vinhthanh2.lophocdientu.mapper.UserMapper;
 import com.vinhthanh2.lophocdientu.repository.UserRepo;
-import com.vinhthanh2.lophocdientu.service.AuthService;
-import com.vinhthanh2.lophocdientu.service.GiaoVienService;
-import com.vinhthanh2.lophocdientu.service.JwtService;
+import com.vinhthanh2.lophocdientu.service.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,6 +31,8 @@ public class AuthController {
     private AuthService authService;
     private final GiaoVienService giaoVienService;
     private final UserMapper userMapper;
+    private final TinhService tinhService;
+    private final XaService xaService;
 
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody Map<String, String> request) {
@@ -55,6 +55,21 @@ public class AuthController {
     @PostMapping("/dang-ky-giao-vien")
     public ResponseEntity<?> dangKyGiaoVien(@RequestBody TeacherRegisterReq req) {
         return ResponseEntity.ok((giaoVienService.dangKyGiaoVien(req)));
+    }
+
+    @GetMapping("/tinh")
+    public ResponseEntity<?> layDsTinh(@RequestParam(required = false, defaultValue = "") String search,
+                                       @RequestParam(defaultValue = "1") int page,
+                                       @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(tinhService.layDsTinh(search, page, size));
+    }
+
+    @GetMapping("tinh/{tinhId}/xa")
+    public ResponseEntity<?> layDsXa(@RequestParam(required = false, defaultValue = "") String search,
+                                     @RequestParam(required = false) Long tinhId,
+                                     @RequestParam(defaultValue = "1") int page,
+                                     @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(xaService.layDsXa(search, tinhId, page, size));
     }
 
     @GetMapping("/me")
