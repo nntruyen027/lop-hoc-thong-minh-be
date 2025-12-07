@@ -66,7 +66,7 @@ public class AuthController {
 
     @GetMapping("tinh/{tinhId}/xa")
     public ResponseEntity<?> layDsXa(@RequestParam(required = false, defaultValue = "") String search,
-                                     @RequestParam(required = false) Long tinhId,
+                                     @PathVariable Long tinhId,
                                      @RequestParam(defaultValue = "1") int page,
                                      @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(xaService.layDsXa(search, tinhId, page, size));

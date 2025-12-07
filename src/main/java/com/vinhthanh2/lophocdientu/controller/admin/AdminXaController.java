@@ -11,7 +11,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -60,9 +59,11 @@ public class AdminXaController {
 
     @GetMapping("/importer/template")
     public ResponseEntity<byte[]> downloadTemplate() throws IOException {
-        // Lấy file từ resources
-        Resource resource = new ClassPathResource("templates/mau_import_xa.xlsx");
 
+        // Load file từ resources (OK cho JAR)
+        ClassPathResource resource = new ClassPathResource("templates/mau_import_xa.xlsx");
+
+        // Lấy InputStream thay vì getFile()
         InputStream inputStream = resource.getInputStream();
         XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
 
@@ -73,17 +74,20 @@ public class AdminXaController {
             sheet = workbook.createSheet("DanhMucTinh");
         }
 
+        // Xóa dữ liệu cũ (ngoại trừ header)
         int lastRow = sheet.getLastRowNum();
         for (int i = lastRow; i > 0; i--) {
             Row row = sheet.getRow(i);
             if (row != null) sheet.removeRow(row);
         }
 
+        // Header
         Row header = sheet.getRow(0);
         if (header == null) header = sheet.createRow(0);
         header.createCell(0).setCellValue("ID");
         header.createCell(1).setCellValue("Tên tỉnh");
 
+        // Ghi danh sách tỉnh
         int rowIndex = 1;
         for (Tinh tinh : tinhs) {
             Row row = sheet.createRow(rowIndex++);
@@ -91,7 +95,7 @@ public class AdminXaController {
             row.createCell(1).setCellValue(tinh.getId() + " - " + tinh.getTen());
         }
 
-        // Đọc nội dung file
+        // Xuất file
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         workbook.write(out);
         workbook.close();
@@ -102,6 +106,7 @@ public class AdminXaController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=mau_import_xa.xlsx")
                 .body(out.toByteArray());
     }
+
 
     @PostMapping(value = "/importer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> importXa(@RequestParam("file") MultipartFile file) throws IOException {

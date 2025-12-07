@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
 
 @RestController
 @RequestMapping("/quan-tri/tinh")
@@ -53,18 +51,19 @@ public class AdminTinhController {
 
     @GetMapping("/importer/template")
     public ResponseEntity<byte[]> downloadTemplate() throws IOException {
-        // Lấy file từ resources
-        Resource resource = new ClassPathResource("templates/mau_import_tinh.xlsx");
 
-        // Đọc nội dung file
-        byte[] fileBytes = Files.readAllBytes(resource.getFile().toPath());
+        ClassPathResource resource = new ClassPathResource("templates/mau_import_tinh.xlsx");
+
+        byte[] fileBytes = resource.getInputStream().readAllBytes();
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=mau_import_tinh.xlsx")
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=mau_import_tinh.xlsx")
                 .body(fileBytes);
     }
+
 
     @PostMapping(value = "/importer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> importTinh(@RequestParam("file") MultipartFile file) throws IOException {

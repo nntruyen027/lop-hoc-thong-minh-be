@@ -1,3 +1,5 @@
+DROP FUNCTION IF EXISTS dm_chung.fn_lay_tat_ca_xa;
+
 CREATE OR REPLACE FUNCTION dm_chung.fn_lay_tat_ca_xa
 (
     p_search   VARCHAR(500),
