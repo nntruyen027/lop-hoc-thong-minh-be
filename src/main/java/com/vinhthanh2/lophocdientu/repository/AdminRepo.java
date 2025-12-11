@@ -34,7 +34,7 @@ public class AdminRepo {
                 """;
 
         AdminPro pro = (AdminPro) entityManager.createNativeQuery(sql, AdminPro.class)
-                .setParameter("p_od", id)
+                .setParameter("p_id", id)
                 .setParameter("p_avatar", req.getAvatar())
                 .setParameter("p_ho_ten", req.getHoTen())
                 .getSingleResult();
