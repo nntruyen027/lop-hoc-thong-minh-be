@@ -48,7 +48,7 @@ public class AdminHocSinhController {
     public ResponseEntity<PageResponse<StudentRes>> layDsHocSinhTheoLop(
             @PathVariable Long lopId,
             @RequestParam(required = false, defaultValue = "") String search,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         return ResponseEntity.ok(hocSinhService.layHocSinhTheoLop(lopId, search, page, size));
@@ -57,18 +57,18 @@ public class AdminHocSinhController {
     // ============================================
     // 2. Lấy học sinh theo ID
     // ============================================
-    @Operation(
-            summary = "Lấy học sinh theo ID",
-            description = "API trả về chi tiết một học sinh theo ID."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Lấy thành công")
-    })
-    @SecurityApiResponses
-    @GetMapping("/{id}")
-    public ResponseEntity<StudentRes> layHocSinhTheoId(@PathVariable Long id) {
-        return ResponseEntity.ok(hocSinhService.layHocSinhTheoId(id));
-    }
+//    @Operation(
+//            summary = "Lấy học sinh theo ID",
+//            description = "API trả về chi tiết một học sinh theo ID."
+//    )
+//    @ApiResponses({
+//            @ApiResponse(responseCode = "200", description = "Lấy thành công")
+//    })
+//    @SecurityApiResponses
+//    @GetMapping("/{id}")
+//    public ResponseEntity<StudentRes> layHocSinhTheoId(@PathVariable Long id) {
+//        return ResponseEntity.ok(hocSinhService.layHocSinhTheoId(id));
+//    }
 
     // ============================================
     // 3. Sửa thông tin học sinh theo ID

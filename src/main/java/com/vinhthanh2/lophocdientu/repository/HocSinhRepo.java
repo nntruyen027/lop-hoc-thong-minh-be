@@ -27,7 +27,7 @@ public class HocSinhRepo {
         int offset = (page - 1) * size;
 
         String sql = """
-                    SELECT * FROM fn_lay_hoc_sinh_theo_lop(
+                    SELECT * FROM school.fn_lay_hoc_sinh_theo_lop(
                         :p_lop_id, :p_search, :p_offset, :p_limit
                     )
                 """;
@@ -45,7 +45,7 @@ public class HocSinhRepo {
     // ============================================================
     public Long demHocSinhTheoLop(Long lopId, String search) {
         String sql = """
-                    SELECT fn_dem_hoc_sinh_theo_lop(:p_lop_id, :p_search)
+                    SELECT school.fn_dem_hoc_sinh_theo_lop(:p_lop_id, :p_search)
                 """;
 
         Object result = entityManager.createNativeQuery(sql)
@@ -77,7 +77,7 @@ public class HocSinhRepo {
     public User taoHocSinh(StudentRegisterReq req) {
 
         String sql = """
-                    SELECT * FROM fn_tao_hoc_sinh(
+                    SELECT * FROM school.fn_tao_hoc_sinh(
                         :p_username,
                         :p_password,
                         :p_avatar,
@@ -108,7 +108,8 @@ public class HocSinhRepo {
                         :p_sdt_me,
                         :p_ten_ph_khac,
                         :p_ns_ph_khac,
-                        :p_sdt_ph_khac
+                        :p_sdt_ph_khac,
+                        :p_xa_id
                     )
                 """;
 
@@ -146,6 +147,7 @@ public class HocSinhRepo {
                 .setParameter("p_ten_ph_khac", req.getTenPhKhac())
                 .setParameter("p_ns_ph_khac", req.getNsPhKhac())
                 .setParameter("p_sdt_ph_khac", req.getSdtPhKhac())
+                .setParameter("p_xa_id", req.getXaId())
 
                 .getSingleResult();
     }
@@ -157,7 +159,7 @@ public class HocSinhRepo {
     public User suaHocSinh(UpdateStudentReq req) {
 
         String sql = """
-                    SELECT * FROM fn_sua_hoc_sinh(
+                    SELECT * FROM school.fn_sua_hoc_sinh(
                         :p_username,
                         :p_avatar,
                         :p_ho_ten,
@@ -186,7 +188,8 @@ public class HocSinhRepo {
                         :p_sdt_me,
                         :p_ten_ph_khac,
                         :p_ns_ph_khac,
-                        :p_sdt_ph_khac
+                        :p_sdt_ph_khac,
+                        :p_xa_id
                     )
                 """;
 
@@ -223,6 +226,7 @@ public class HocSinhRepo {
                 .setParameter("p_ten_ph_khac", req.getTenPhKhac())
                 .setParameter("p_ns_ph_khac", req.getNsPhKhac())
                 .setParameter("p_sdt_ph_khac", req.getSdtPhKhac())
+                .setParameter("p_xa_id", req.getXaId())
 
                 .getSingleResult();
     }
@@ -234,7 +238,7 @@ public class HocSinhRepo {
     public boolean xoaHocSinh(Long id) {
 
         String sql = """
-                    SELECT fn_xoa_hoc_sinh(:p_id)
+                    SELECT school.fn_xoa_hoc_sinh(:p_id)
                 """;
 
         Object result = entityManager.createNativeQuery(sql)
